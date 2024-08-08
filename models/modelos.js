@@ -76,7 +76,7 @@ Produto.init (
 (
     async () => {
         try {
-            await sequelize.sync({force: true});
+            await sequelize.sync({alter: true});
             console.log("Modelos criados!");
         }catch (error){
             console.log("Erro ao forçar modelos: " + error);

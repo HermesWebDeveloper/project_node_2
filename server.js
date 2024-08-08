@@ -14,7 +14,9 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/usuarios', async (req, res) => {
-    const users = await User.findAll();
+    const users = await User.findAll({
+        order: [['id', 'ASC']]
+    });
     res.json(users);
 });
 
@@ -26,6 +28,40 @@ app.post('/api/usuarios', async (req, res) => {
         console.log(newUser)
     } catch (error) {
         console.log("Erro no cadastro do usuário que veio do front: ", error);
+    };
+});
+
+app.get('/api/usuarios/:id', async (req, res) => {
+    try {
+        const user = await User.findByPk(req.params.id);
+        if (user) {
+            res.json(user);
+        } else {
+            res.status(404).json({ message: "Usuário não encontrado!"})
+        };
+    } catch(error) {
+        console.log("Erro ao carregar usuário: ", error);
+    };
+});
+
+app.delete('/api/usuarios/:id', async (req, res) => {
+    try {
+        const user = await User.findByPk(req.params.id);
+        await user.destroy();
+    } catch (error) {
+        console.log("Erro ao excluir usuário: ", error);
+    }
+});
+
+app.put('/api/usuarios/:id', async (req, res) => {
+    try {
+        const {firstname, surname, email, password} = req.body;
+        const user = await User.findByPk(req.params.id);
+        user.update({firstname, surname, email, password});
+        await user.save();
+        res.json(user);
+    } catch(error) {
+        console.log("Erro ao fazer update do usuário: ", error);
     };
 });
 
